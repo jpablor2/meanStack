@@ -1,4 +1,4 @@
-var express = require("express"),  
+ var express = require("express"),  
     app = express(),
     bodyParser  = require("body-parser"),
     methodOverride = require("method-override");
@@ -8,6 +8,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());  
 app.use(methodOverride());
 
+
+app.use(express.static(__dirname + '/public')); 
 
 var SensorCtrl = require('./controllers/sensor');
 
@@ -20,16 +22,21 @@ router.get('/', function(req, res) {
 
 router.route('/sensor')  
   .get(SensorCtrl.findAllSensor)
-  .post(SensorCtrl.addSensor);
+  .post(SensorCtrl.addSensor)
+    .delete(SensorCtrl.restart);
 
 router.route('/sensor/:id')  
   .get(SensorCtrl.findById)
   .put(SensorCtrl.updateSensor)
   .delete(SensorCtrl.deleteSensor);
 
+router.route('/sensor/version/:version')
+    .get(SensorCtrl.findByVersion);
+
+
 app.use(router);
 
-mongoose.connect('mongodb://localhost/Sensor', function(err, res) {  
+mongoose.connect('mongodb://localhost/Radiacion', function(err, res) {  
   if(err) {
     console.log('ERROR: connecting to Database. ' + err);
   }
